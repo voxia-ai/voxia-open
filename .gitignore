@@ -47,3 +47,13 @@ datasets/
 
 # Bench outputs
 *_bench*.json
+
+# models
+path/to/model_dir/
+models/
+
+# weights
+*.pth
+*.pt
+*.ckpt
+*.safetensors
