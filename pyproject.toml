@@ -1,21 +1,55 @@
 [build-system]
-requires = ["setuptools>=68", "wheel"]
+requires = ["setuptools>=65", "wheel"]
 build-backend = "setuptools.build_meta"
+
 
 [project]
 name = "voxia"
 version = "0.1.0"
-description = "Voxia Open - Free Voice AI Runtime"
+description = "Fast Voice AI runtime for streaming text-to-speech"
 readme = "README.md"
-requires-python = ">=3.9"
-dependencies = [
-  "numpy>=1.24",
-  "torch>=2.0",
-  "PyYAML>=6.0"
+license = { text = "MIT" }
+
+authors = [
+  { name = "Voxia Project" }
 ]
+
+keywords = [
+  "tts",
+  "voice-ai",
+  "speech-synthesis",
+  "audio",
+  "ai-runtime"
+]
+
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.9",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Topic :: Multimedia :: Sound/Audio :: Speech"
+]
+
+requires-python = ">=3.9"
+
+dependencies = [
+  "torch",
+  "numpy",
+  "PyYAML",
+  "safetensors",
+  "packaging"
+]
+
+
+[project.urls]
+Homepage = "https://github.com/voxia-ai/voxia-open"
+Repository = "https://github.com/voxia-ai/voxia-open"
+Issues = "https://github.com/voxia-ai/voxia-open/issues"
+
 
 [tool.setuptools]
 package-dir = {"" = "src"}
+
 
 [tool.setuptools.packages.find]
 where = ["src"]
