@@ -1,0 +1,49 @@
+
+---
+
+# 3. `.gitignore`
+
+```gitignore
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+
+# Build
+build/
+dist/
+*.egg-info/
+
+# Virtual env
+.venv/
+venv/
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Cache
+.cache/
+
+# Model / weights
+*.pth
+*.pt
+*.safetensors
+*.onnx
+*.bin
+
+# Data / datasets
+data/
+datasets/
+
+# Bench outputs
+*_bench*.json
