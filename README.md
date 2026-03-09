@@ -77,6 +77,16 @@ python src/examples/demo.py \
   --out demo_out.wav
 ```
 
+## モデル
+Voxia Open には事前学習済みモデルは含まれていません。
+
+互換性のある SBV2 モデルを準備し、以下の方法で指定してください。
+
+```bash
+python demo.py --model /path/to/model_dir
+```
+
+
 ## ベンチマーク
 
 ベンチマーク実行例
