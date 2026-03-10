@@ -127,7 +127,19 @@ SBV2互換モデルを使用できます。
 
 ---
 
+## ストリーミング
+
+リアルタイム音声生成デモ
+
+<p align="center"> <img src="docs/streaming_demo.gif" width="800"> </p>
+
+---
+
 ## アーキテクチャ
+
+<p align="center"> <img src="docs/architecture.png" width="300"> </p>
+
+Voxia は音声モデルとランタイムを分離した設計になっています。
 ```bash
 Application
      ↓
@@ -165,11 +177,11 @@ Voxia Open は現在 **開発中のプロジェクト**です。
 ## Voxia エコシステム
 ```bash
 Voxia
-├ Voxia Open
-├ Voxia Cloud
-├ Voxia Studio
-├ Voxia Edge
-└ Voxia Core
+├ Voxia Open   (オープンソースランタイム)
+├ Voxia Cloud  (マネージドAPIプラットフォーム)
+├ Voxia Studio (開発ツール)
+├ Voxia Edge   (軽量ランタイム)
+└ Voxia Core   (独自音声モデル)
 ```
 
 ---

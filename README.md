@@ -125,7 +125,20 @@ Example speech generation.
 <p align="center"> <img src="docs/demo.gif" width="800"> </p>
 
 ---
+
+## Streaming
+
+Real-time speech generation.
+
+<p align="center">
+<img src="docs/streaming_demo.gif" width="800">
+</p>
+
+---
 ## Architecture
+<p align="center">
+<img src="docs/architecture.png" width="300">
+</p>
 
 Voxia separates the runtime from the voice model.
 ```bash
@@ -139,6 +152,7 @@ Application
      ↓
  Voice Model
 ```
+
 This architecture allows Voxia to support multiple models in the future.
 
 ---

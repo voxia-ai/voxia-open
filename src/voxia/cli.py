@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import annotations
+import warnings
+warnings.filterwarnings("ignore")
 
 import argparse
 import sys
