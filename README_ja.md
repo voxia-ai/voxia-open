@@ -6,52 +6,27 @@
 
 [English](README.md) | 日本語
 
-**Voxia Open** は、リアルタイム音声AIアプリケーションのための  
-高性能な音声合成ランタイムです。
+**リアルタイム音声AIアプリケーションを構築するための軽量オープンソースランタイム**
 
-<p align="center">
-  <img src="docs/demo.gif" width="900">
-</p>
+Voxia Open は、次世代の音声AIシステムのための  
+**実験的オープンソースランタイム**です。
 
-Voxia Open は **SBV2互換モデルに対応したローカル音声合成ランタイム**を提供します。  
-本プロジェクトは、Voxia エコシステムのオープンソース基盤として開発されています。
-
-Voxia の長期的な目標は **Voice AI Operating System（音声AI OS）** を構築することです。
+ローカル音声合成、ストリーミングAPI、CLIツール、HTTPサーバーを提供し、  
+開発者がリアルタイム音声アプリケーションを構築できる環境を目指しています。
 
 ---
-<br>
 
-# 概要
-
-現代の音声AIアプリケーションでは、以下のような要件が求められます。
-
-- 低レイテンシ音声合成
-- ストリーミング音声生成
-- 柔軟なモデルバックエンド
-- スケーラブルなランタイム設計
-
-Voxia Open は **アプリケーションと音声モデルの間に Runtime 層**を設けることで  
-柔軟な音声AIアーキテクチャを実現します。
-
----
-<br>
-
-# 特徴
-
-- ローカル音声合成ランタイム
+## 特徴
 - SBV2互換モデル対応
-- ストリーミングTTS
+- ローカル推論
+- ストリーミング音声合成
 - Python API
+- CLIツール
+- HTTP APIサーバー
 - ベンチマークツール
-- Runtime / Adapter アーキテクチャ
-- Voice AIアプリケーション向け設計
-
+- モジュール型ランタイム設計
 ---
-<br>
-
-# クイックスタート
-
-リポジトリをクローンしてインストールします。
+## インストール
 
 ```bash
 git clone https://github.com/voxia-ai/voxia-open
@@ -65,10 +40,14 @@ pip install -e .
 ```
 
 ---
-<br>
 
-# 最小サンプル
+## 必要環境
+Python 3.9 以上
+<br>PyTorch 2.0 以上
 
+---
+
+## クイックスタート
 ```bash
 from voxia import TTS
 
@@ -78,210 +57,141 @@ wav, sr = tts.speak("こんにちは。Voxia Open のテストです。")
 ```
 
 ---
-<br>
 
-# ストリーミング音声合成
 
+## CLI
+
+音声生成
 ```bash
-from voxia import TTS
-
-tts = TTS.load("/path/to/model_dir")
-
-for chunk, sr in tts.stream("こんにちは。ストリーミングデモです。"):
-    ...
-```
-
----
-<br>
-
-# デモ
-デモスクリプトを実行します。
-```bash
-python src/examples/demo.py \
+voxia speak \
   --model /path/to/model_dir \
-  --text "こんにちは。Voxia Open のデモです。" \
-  --out demo_out.wav
+  --text "こんにちは"
 ```
-生成された音声は
+
+ストリーミング生成
 ```bash
-demo_out.wav
+voxia stream \
+  --model /path/to/model_dir \
+  --text "ストリーミングデモ"
 ```
-に保存されます。
+
+ベンチマーク
+```bash
+voxia benchmark --model /path/to/model_dir
+```
 
 ---
-<br>
 
-# モデル
+## HTTP API
+Voxia Open は HTTP API サーバーも提供しています。
+
+サーバー起動
+```bash
+voxia serve --model /path/to/model_dir
+```
+
+ヘルスチェック
+```bash
+curl http://127.0.0.1:8000/health
+```
+
+音声生成
+```bash
+curl -X POST http://127.0.0.1:8000/tts \
+  -H "Content-Type: application/json" \
+  -d '{"text":"こんにちは"}' \
+  --output output.wav
+```
+
+
+---
+
+
+## モデル
 Voxia Open には 事前学習済みモデルは含まれていません。
 
-互換性のある SBV2 モデルを準備し、以下のように指定してください。
+SBV2互換モデルを使用できます。
+
+モデルディレクトリ例
 ```bash
---model /path/to/model_dir
+/path/to/model_dir
+ ├ config.json
+ ├ model.safetensors
+ └ style_vectors.npy
 ```
 
 ---
-<br>
 
-# ベンチマーク
-ベンチマークツールを実行できます。
-```bash
-PYTHONPATH=./src python3 examples/benchmark.py \
-  --model ./path/to/model_dir \
-  --device cpu \
-  --runs 5 \
-  --warmup 1 \
-  --threads 4 \
-  --json-out voxia_bench.json
-```
-指標
-
-**RTF (Real Time Factor)**
-<br>RTF < 1.0 の場合、リアルタイムより高速に生成されます。
-
-**TTFB (Time To First Byte)**
-<br>最初の音声チャンクが生成されるまでの時間。
+## デモ
+<p align="center"> <img src="docs/demo.gif" width="800"> </p>
 
 ---
-<br>
 
-# アーキテクチャ
-Voxia は アプリケーションと音声モデルの間に Runtime 層を設けています。
+## アーキテクチャ
 ```bash
-アプリケーション
-      ↓
-   Voxia API
-      ↓
+Application
+     ↓
+ Voxia API
+     ↓
  Voxia Runtime
-      ↓
+     ↓
  Model Adapter
-      ↓
-  Voice Model
+     ↓
+ Voice Model
 ```
-
-この設計により、将来的に以下を同じAPIで扱えるようになります。
-
-- SBV2互換モデル
-
-- Voxia独自モデル
-
-- Cloud実行
-
-- Edge実行
-
+この構造により、将来的に複数の音声モデルに対応できます。
 
 ---
-<br>
 
-# プロジェクト構成
-```bash
-voxia-open/
-├ src/
-│  └ voxia/
-│     ├ __init__.py
-│     ├ tts.py
-│     ├ runtime/
-│     ├ adapters/
-│     ├ formats/
-│     ├ nlp/
-│     ├ model/
-│     └ utils/
-│
-├ examples/
-│  ├ benchmark.py
-│  └ demo.py
-│
-├ tests/
-├ docs/
-│  └ demo.gif
-│
-├ README.md
-├ README_ja.md
-├ LICENSE
-└ pyproject.toml
-```
+## 現状
+
+Voxia Open は現在 **開発中のプロジェクト**です。
+
+主な目的は以下です。
+
+- ローカル音声推論ランタイム
+- ストリーミング音声パイプライン
+- モデル互換レイヤー
+- 開発者ツール（CLI / HTTP API / ベンチマーク）
+
+現在の実装は、将来の音声AIシステムのための  
+**ランタイムアーキテクチャと開発基盤の構築**に重点を置いています。
+
+ネイティブ推論パイプラインはまだ実験段階のため、  
+現時点では明瞭な音声を生成しない場合があります。
 
 ---
-<br>
 
-# Voxia エコシステム
+## Voxia エコシステム
 ```bash
 Voxia
-├ Voxia Open     (オープンソースランタイム)
-├ Voxia Cloud    (商用API)
-├ Voxia Studio   (開発ツール)
-├ Voxia Edge     (軽量ランタイム)
-└ Voxia Core     (独自モデル)
+├ Voxia Open
+├ Voxia Cloud
+├ Voxia Studio
+├ Voxia Edge
+└ Voxia Core
 ```
 
 ---
-<br>
 
-# ロードマップ
-Phase 1
+## ライセンス
 
-- SBV2互換ランタイム
+Apache License 2.0
+---
 
-- ストリーミング音声合成
+## ビジョン
+Voxia は次のようなアプリケーションの基盤を目指します。
 
-- ベンチマークツール
-
-Phase 2
-
-- Voxia Runtime エンジン
-
-- Cloud API 統合
-
-- 日本語音声パイプライン強化
-
-Phase 3
-
-- Voxia 独自モデル
+- 音声AIアシスタント
 
 - 音声AIエージェント
 
-- Edge Runtime
 
----
-<br>
-
-# コントリビューション
-Issue や Pull Request を歓迎します。
-
-特に以下の分野の貢献を歓迎します。
-
-- Runtime設計
-
-- ストリーミング改善
-
-- 日本語前処理
-
-- ドキュメント
-
-- ベンチマーク改善
-
----
-<br>
-
-# ライセンス
-Apache License 2.0
-
----
-<br>
-
-# ビジョン
-
-Voxia は次のようなアプリケーションの基盤になることを目指しています。
-
-- リアルタイム音声アプリ
-
-- AIアシスタント
-
-- 音声エージェント
 
 - ゲーム
 
 - ロボティクス
 
-- エッジAIデバイス
+- エッジデバイス
 
 **Voxia = Voice AI Operating System**

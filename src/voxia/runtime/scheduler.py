@@ -4,7 +4,18 @@ from typing import Iterator
 
 import numpy as np
 
-from .types import InferenceRequest, PreparedChunk
+from .types import InferenceRequest
+
+
+class PreparedChunk:
+    def __init__(self, index, text, speaker, style, style_weight, is_first=False, seed=None):
+        self.index = index
+        self.text = text
+        self.speaker = speaker
+        self.style = style
+        self.style_weight = style_weight
+        self.is_first = is_first
+        self.seed = seed
 
 
 class ChunkScheduler:

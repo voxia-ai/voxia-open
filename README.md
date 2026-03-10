@@ -6,54 +6,24 @@
 
 English | [日本語](README_ja.md)
 
-**High-performance speech synthesis runtime for Voice AI applications**
+**A lightweight open-source runtime for building real-time Voice AI applications.**
 
-<p align="center">
-  <img src="docs/demo.gif" width="900">
-</p>
-
-Voxia Open is an experimental **speech synthesis runtime** designed for real-time Voice AI applications.
-
-It provides a **local inference runtime compatible with SBV2-style models** and serves as the open foundation of the Voxia ecosystem.
-
-The long-term goal of Voxia is to become a **Voice AI Operating System**.
+Voxia Open is an experimental open-source runtime for real-time Voice AI systems.
 
 ---
-<br>
+## Features
 
-
-# Overview
-
-Modern Voice AI applications require:
-
-- low-latency speech synthesis
-- streaming audio generation
-- flexible model backends
-- scalable runtime architecture
-
-Voxia Open provides a **runtime layer between applications and voice models**, enabling flexible integration of speech models and future cloud services.
-
----
-<br>
-
-
-# Features
-
-- Local speech synthesis runtime
-- SBV2-compatible model support
-- Streaming TTS
+- SBV2 compatible model loading
+- Local inference runtime
+- Streaming text-to-speech
 - Python API
+- Command Line Interface
+- HTTP API server
 - Benchmark tools
-- Runtime / Adapter architecture
-- Designed for Voice AI applications
+- Modular runtime architecture
 
 ---
-<br>
-
-
-# Quick Start
-
-Clone the repository and install the package.
+## Installation
 
 ```bash
 git clone https://github.com/voxia-ai/voxia-open
@@ -65,89 +35,103 @@ source .venv/bin/activate
 pip install -U pip
 pip install -e .
 ```
+
 ---
-<br>
+## Requirements
+Python 3.9+
+<br>PyTorch 2.0+
 
-# Minimal Example
-
-```bash
+---
+## Quick Start
+```python
 from voxia import TTS
 
 tts = TTS.load("/path/to/model_dir")
 
-wav, sr = tts.speak("Hello. This is Voxia Open.")
+wav, sr = tts.speak("Hello from Voxia Open")
 ```
 
 ---
-<br>
+## CLI
+Voxia Open provides a simple command line interface.
 
-# Streaming Example
+Generate speech:
 ```bash
-from voxia import TTS
-
-tts = TTS.load("/path/to/model_dir")
-
-for chunk, sr in tts.stream("Hello. This is a streaming demo."):
-    ...
-```
-
----
-<br>
-
-# Demo
-Run the demo script.
-```bash
-python src/examples/demo.py \
+voxia speak \
   --model /path/to/model_dir \
-  --text "Hello. This is the Voxia Open demo." \
-  --out demo_out.wav
+  --text "Hello Voxia" \
+  --out output.wav
 ```
-The generated audio will be saved to:
+
+Streaming generation:
 ```bash
-demo_out.wav
+voxia stream \
+  --model /path/to/model_dir \
+  --text "Streaming demo"
+```
+
+Benchmark:
+```bash
+voxia benchmark --model /path/to/model_dir
+```
+
+Demo:
+```bash
+voxia demo --model /path/to/model_dir
 ```
 
 ---
-<br>
+## HTTP API
 
-# Model
+Voxia Open also includes an experimental HTTP server.
+
+Start server:
+```bash
+voxia serve --model /path/to/model_dir
+```
+
+Health check:
+```bash
+curl http://127.0.0.1:8000/health
+```
+
+Synthesize speech:
+```bash
+curl -X POST http://127.0.0.1:8000/tts \
+  -H "Content-Type: application/json" \
+  -d '{"text":"Hello from Voxia Open"}' \
+  --output output.wav
+```
+
+---
+## Models
 Voxia Open does not include pretrained models.
-Please prepare a compatible SBV2 model and specify it using:
+
+You can use compatible SBV2 models.
+
+Example model directory:
 ```bash
---model /path/to/model_dir
+/path/to/model_dir
+ ├ config.json
+ ├ model.safetensors
+ └ style_vectors.npy
 ```
 
 ---
-<br>
+## Demo
 
-# Benchmark
-Run the benchmark tool:
-```bash
-PYTHONPATH=./src python3 examples/benchmark.py \
-  --model ./path/to/model_dir \
-  --device cpu \
-  --runs 5 \
-  --warmup 1 \
-  --threads 4 \
-  --json-out voxia_bench.json
-```
-Metrics:
+Example speech generation.
 
-RTF (Real Time Factor)
-<br>If RTF < 1.0, synthesis is faster than real-time.
-
-TTFB (Time To First Byte)
-<br>Time until the first audio chunk is returned.
+<p align="center"> <img src="docs/demo.gif" width="800"> </p>
 
 ---
-<br>
+## Architecture
 
-# Architecture
-Voxia introduces a runtime layer between applications and voice models.
+Voxia separates the runtime from the voice model.
 ```bash
 Application
      ↓
-  Voxia API
+ Voxia API
      ↓
  Voxia Runtime
      ↓
@@ -155,80 +139,72 @@ Application
      ↓
  Voice Model
 ```
-This architecture allows Voxia to support:
-- SBV2-compatible models
-
-- Voxia-native models
-
-- cloud execution
-
-- edge execution
-
-- with the same API.
+This architecture allows Voxia to support multiple models in the future.
 
 ---
-<br>
-
-# Project Structure
+## Project Structure
 ```bash
-voxia-open/
-├ src/
-│  └ voxia/
-│     ├ __init__.py
-│     ├ tts.py
-│     ├ runtime/
-│     ├ adapters/
-│     ├ formats/
-│     ├ nlp/
-│     ├ model/
-│     └ utils/
+voxia-open
+├ src/voxia
 │
-├ examples/
-│  ├ benchmark.py
-│  └ demo.py
+├ examples
 │
-├ tests/
-├ docs/
-│  └ demo.gif
+├ docs
+│
+├ tests
 │
 ├ README.md
+├ README_ja.md
 ├ LICENSE
 └ pyproject.toml
 ```
 
 ---
-<br>
+## Current Status
 
-# Voxia Ecosystem
+Voxia Open is currently under active development.
+
+The main goals of the project are:
+
+- local speech inference runtime
+- streaming audio pipeline
+- model compatibility layer
+- developer tools (CLI, HTTP API, benchmarking)
+
+The current implementation focuses on building the **runtime architecture** and **developer platform** for future voice AI systems.
+
+The native inference pipeline is still experimental and may not yet produce fully intelligible speech.
+
+---
+## Voxia Ecosystem
 ```bash
 Voxia
-├ Voxia Open     (open source runtime)
-├ Voxia Cloud    (commercial API)
-├ Voxia Studio   (development tools)
-├ Voxia Edge     (lightweight runtime)
-└ Voxia Core     (proprietary models)
+├ Voxia Open   (open-source runtime)
+├ Voxia Cloud  (managed API platform)
+├ Voxia Studio (developer tools)
+├ Voxia Edge   (lightweight runtime)
+└ Voxia Core   (proprietary voice models)
 ```
 
 ---
-<br>
-
-# Roadmap
-
+## Roadmap
 Phase 1
 
-- SBV2-compatible runtime
+- SBV2 compatible runtime
 
-- Streaming speech synthesis
+- Streaming TTS
 
-- Benchmark tools
+- CLI tools
+
+- HTTP API
 
 Phase 2
 
-- Voxia runtime engine
+- Voxia Runtime engine
 
-- Cloud API integration
+- Cloud integration
 
-- improved Japanese speech pipeline
+- improved Japanese pipeline
 
 Phase 3
 
@@ -238,28 +214,13 @@ Phase 3
 
 - Edge runtime
 
----
-<br>
-
-# Current Status
-Voxia Open is currently under active development.
-
-The main goals are:
-
-- local speech inference runtime
-
-- runtime / adapter architecture
-
-- foundation for Voxia Cloud and Voxia Core
-
 
 ---
-<br>
+## Contributing
 
-# Contributing
-Issues and pull requests are welcome.
+Pull requests and issues are welcome.
 
-Areas where contributions are especially helpful:
+Areas of interest:
 
 - runtime architecture
 
@@ -272,28 +233,26 @@ Areas where contributions are especially helpful:
 - benchmarking
 
 ---
-<br>
 
-# License
+
+## License
 Apache License 2.0
 
 ---
-<br>
 
-# Vision
 
-Voxia aims to become the foundation for:
+## Vision
 
-- real-time voice applications
+Voxia aims to power applications such as:
 
-- AI assistants
+- real-time voice assistants
 
-- voice agents
-
-- robotics
+- AI voice agents
 
 - games
 
-- edge AI devices
+- robotics
+
+- edge devices
 
 **Voxia = Voice AI Operating System**

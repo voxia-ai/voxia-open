@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 from __future__ import annotations
-
+from voxia import TTS
 import warnings
 warnings.filterwarnings("ignore")
 

@@ -18,7 +18,7 @@ class SBV2Adapter(ModelAdapter):
         self.model = model
         self.nlp = nlp
         self.device = str(device)
-        self.sample_rate = int(getattr(model, "cfg", {}).get("data", {}).get("sampling_rate", bundle.sample_rate))
+        self.sample_rate = int(getattr(bundle, "sample_rate", 24000))
 
     @classmethod
     def load(
@@ -44,6 +44,7 @@ class SBV2Adapter(ModelAdapter):
         spk2id = getattr(self.bundle, "speakers", {}) or {}
         if not spk2id:
             return 0
+
         if speaker in spk2id:
             return int(spk2id[speaker])
 
@@ -121,4 +122,22 @@ class SBV2Adapter(ModelAdapter):
         )
 
         wav = wav_t.detach().cpu().float().numpy().reshape(-1)
-        return wav, int(self.bundle.sample_rate)
+        return wav, int(self.sample_rate)
+
+    # Runtime v2 / pipeline 互換のための薄いラッパー
+    def prepare(self, request):
+        return request
+
+    def infer(self, request):
+        wav, sr = self.infer_text(
+            request.text,
+            speaker=getattr(request, "speaker", "default"),
+            style=getattr(request, "style", "Neutral"),
+            style_weight=float(getattr(request, "style_weight", 1.0)),
+            speed=float(getattr(request, "speed", 1.0)),
+            seed=getattr(request, "seed", None),
+        )
+        return wav, sr
+
+    def stream(self, request):
+        yield self.infer(request)
